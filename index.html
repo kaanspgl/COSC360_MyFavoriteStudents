@@ -9,36 +9,42 @@
 </head>
 <body>
     <header>
-        <h1>Welcome to I Can / You Can</h1>
+        <div class="logo-container">
+            <img src="images/logo.png" alt="I Can You Can Logo" class="logo">
+        </div>
+        <h1> I Can / You Can</h1>
         <nav>
-            <ul>
+            <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="browse.html">Browse Skills</a></li>
-                <li><a href="login.html">Login</a></li>
-                <li><a href="register.html">Register</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="create-listing.html">Create Listing</a></li>
+                <li><a href="show-listings.html">Show Listings</a></li>
             </ul>
+            <a href="login.html" class="profile-icon">
+                <img src="images/user.png" alt="User Profile">
+            </a>
         </nav>
     </header>
     
     <main>
-        <section>
-            <h2>Explore Skills</h2>
-            <p>Find skills you want to learn or share with others.</p>
-            <a href="browse.html" class="btn">Browse Skills</a>
+        <section class="description">
+            <h2>What is I Can / You Can?</h2>
+            <p>"I Can / You Can" is a community-driven platform where users can offer and learn new skills. Whether you want to teach a skill or find a mentor, our platform connects you with the right people to share knowledge and grow together.</p>
         </section>
         
-        <section class="listings">
-            <div class="listing-card">
-                <h3>Web Development</h3>
-                <p>Learn HTML, CSS, and JavaScript with hands-on projects.</p>
+        <section class="reviews">
+            <div class="review-card">
+                <p>"This website helped me learn coding in just a few weeks! Highly recommend it!"</p>
+                <h4>- Alex J.</h4>
             </div>
-            <div class="listing-card">
-                <h3>Cooking</h3>
-                <p>Master the art of making delicious meals from scratch.</p>
+            <div class="review-card">
+                <p>"A fantastic platform to share skills. I have been teaching photography and meeting amazing people!"</p>
+                <h4>- Sarah L.</h4>
             </div>
-            <div class="listing-card">
-                <h3>Photography</h3>
-                <p>Improve your photography skills with expert guidance.</p>
+            <div class="review-card">
+                <p>"The best place to gain real-world experience. I found a great mentor for graphic design here!"</p>
+                <h4>- Michael T.</h4>
             </div>
         </section>
     </main>
