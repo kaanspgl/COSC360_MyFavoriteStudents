@@ -324,3 +324,53 @@ button:hover {
 }
 
 /*end of brows styling*/
+/*create listing styling*/
+.placeholder-container {
+    text-align: center;
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 18px;
+    color: #333;
+}
+/*end of create listing styling*/
+/*Show listing styling*/
+.listings-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.listing-card {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    text-align: center;
+}
+
+.listing-card h3 {
+    color: #2E8B57;
+}
+
+.listing-card p {
+    font-size: 14px;
+    color: #555;
+}
+
+.listing-author {
+    display: block;
+    margin-top: 10px;
+    font-size: 12px;
+    font-style: italic;
+    color: #777;
+}
+
+/*end of Show listing styling*/
