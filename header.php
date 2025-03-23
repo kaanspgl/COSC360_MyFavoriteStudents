@@ -1,6 +1,29 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 $isLoggedIn = isset($_SESSION['user_id']);
+$profilePicture = 'images/user.png';
+$username = '';
+
+if ($isLoggedIn) {
+    $conn = new mysqli('localhost', 'root', '', 'ican_youcan');
+    if (!$conn->connect_error) {
+        $stmt = $conn->prepare("SELECT profile_picture, username FROM users WHERE id = ?");
+        $stmt->bind_param("i", $_SESSION['user_id']);
+        $stmt->execute();
+        $stmt->bind_result($dbProfilePic, $dbUsername);
+        if ($stmt->fetch()) {
+            if (!empty($dbProfilePic)) {
+                $profilePicture = $dbProfilePic;
+            }
+            $username = $dbUsername;
+        }
+        $stmt->close();
+        $conn->close();
+    }
+}
 ?>
 
 <header>
@@ -12,30 +35,28 @@ $isLoggedIn = isset($_SESSION['user_id']);
     <h1>I Can / You Can</h1>
     <nav>
         <ul class="nav-links">
-
-
             <li><a href="index.php">Home</a></li>
             <li><a href="browse.php">Browse Skills</a></li>
             <li><a href="about.php">About Us</a></li>
             <li><a href="create-listing.php">Create Listing</a></li>
             <li><a href="show-listings.php">Show Listings</a></li>
-
             <li><a href="discussion.php">Discussions</a></li>
-        </ul>
-        <div class="auth-links">
+
             <?php if ($isLoggedIn): ?>
-                <a href="profile.php" class="profile-icon">
-                    <img src="images/user.png" alt="My Profile">
-                </a>
-                <a href="logout.php" class="nav-logout">Logout</a>
+                <li><a href="profile.php">
+                    <img src="<?php echo htmlspecialchars($profilePicture); ?>" alt="My Profile" class="nav-profile-icon">
+                </a></li>
+                <li><a href="logout.php">Logout</a></li>
             <?php else: ?>
-                <a href="login.php" class="profile-icon">
-
-
-                    <img src="images/user.png" alt="Register/Login">
-
-                </a>
+                <li><a href="login.php">
+                    <img src="images/user.png" alt="Login" class="nav-profile-icon">
+                </a></li>
+                <li><a href="register.php">Register</a></li>
             <?php endif; ?>
-        </div>
+            <?php if ($isLoggedIn): ?>
+                <div class="welcome-msg">Welcome, <?php echo htmlspecialchars($username); ?>!</div>
+            <?php endif; ?>
+
+        </ul>
     </nav>
 </header>

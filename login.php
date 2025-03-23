@@ -1,4 +1,43 @@
-<?php session_start(); ?>
+<?php 
+session_start();
+
+$host = 'localhost';
+$db = 'ican_youcan';
+$user = 'root';
+$pass = '';
+
+$conn = new mysqli($host, $user, $pass, $db);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $password = $_POST['password'];
+
+    $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->store_result();
+
+    if ($stmt->num_rows === 1) {
+        $stmt->bind_result($user_id, $hashed_password);
+        $stmt->fetch();
+
+        if (password_verify($password, $hashed_password)) {
+            // Login Success: Start session
+            $_SESSION['user_id'] = $user_id;
+            header("Location: index.php");
+            exit;
+        } else {
+            echo "<script>alert('Incorrect password.');</script>";
+        }
+    } else {
+        echo "<script>alert('No user found with that email.');</script>";
+    }
+    $stmt->close();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,6 +62,8 @@
 
                 <button type="submit">Login</button>
             </form>
+
+            <p>Don't have an account? <a href="register.php">Register here</a></p>
         </section>
     </main>
 
