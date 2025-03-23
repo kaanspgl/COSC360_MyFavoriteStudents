@@ -5,13 +5,15 @@ $isLoggedIn = isset($_SESSION['user_id']);
 
 <header>
     <div class="logo-container">
-        <img src="images/logo.png" alt="I Can You Can Logo" class="logo">
+        <a href="index.php">
+            <img src="images/logo.png" alt="I Can You Can Logo" class="logo">
+        </a>
     </div>
     <h1>I Can / You Can</h1>
     <nav>
         <ul class="nav-links">
 
-          
+
             <li><a href="index.php">Home</a></li>
             <li><a href="browse.php">Browse Skills</a></li>
             <li><a href="about.php">About Us</a></li>
