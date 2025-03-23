@@ -1,21 +1,20 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Profile - I Can / You Can</title>
+    <title>Edit Profile - I Can / You Can</title>
     <link rel="stylesheet" href="style.css">
     <script defer src="profile.js"></script>
 </head>
 <body>
-<?php include 'header.php'; ?>
-
-    
+    <?php include 'header.php'; ?>
 
     <main>
         <section class="profile-form-container">
-            <h2>Set Up Your Profile</h2>
-            <form id="profile-form">
+            <h2>Edit Your Profile</h2>
+            <form id="profile-form" action="profile.php" method="POST" enctype="multipart/form-data">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required>
 
@@ -28,7 +27,7 @@
                 <label for="profile-picture">Profile Picture:</label>
                 <input type="file" id="profile-picture" name="profile-picture" accept="image/*">
 
-                <button type="submit">Create Profile</button>
+                <button type="submit">Update Profile</button>
             </form>
         </section>
     </main>
