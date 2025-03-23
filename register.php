@@ -8,8 +8,8 @@
     <script defer src="register.js"></script>
 </head>
 <body>
-    <div id="header-container"></div>
-    <script src="header.js"></script>
+<?php include 'header.php'; ?>
+
 
     <main>
         <section class="profile-form-container">
