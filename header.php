@@ -8,7 +8,7 @@ $profilePicture = 'images/user.png';
 $username = '';
 
 if ($isLoggedIn) {
-    $conn = new mysqli('localhost', 'root', '', 'ican_youcan');
+    include 'config.php';
     if (!$conn->connect_error) {
         $stmt = $conn->prepare("SELECT profile_picture, username FROM users WHERE id = ?");
         $stmt->bind_param("i", $_SESSION['user_id']);
