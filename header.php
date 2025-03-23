@@ -10,7 +10,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
     <h1>I Can / You Can</h1>
     <nav>
         <ul class="nav-links">
-            <li><a href="index.php">Home</a></li>
+            <li><a href="index.html">Home</a></li>
             <li><a href="browse.html">Browse Skills</a></li>
             <li><a href="about.html">About Us</a></li>
             <li><a href="create-listing.html">Create Listing</a></li>
