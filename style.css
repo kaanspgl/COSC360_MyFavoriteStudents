@@ -374,3 +374,48 @@ button:hover {
 }
 
 /*end of Show listing styling*/
+/*discussion styling*/
+.discussion-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.discussion-card {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.discussion-card h3 {
+    color: #2E8B57;
+    margin-bottom: 10px;
+}
+
+.discussion-card p {
+    font-size: 16px;
+    color: #333;
+}
+
+.discussion-meta {
+    display: block;
+    margin-top: 10px;
+    font-size: 12px;
+    font-style: italic;
+    color: #666;
+}
+
+.placeholder-header {
+    text-align: center;
+    background-color: #fffae0;
+    padding: 20px;
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: #444;
+    border-bottom: 1px solid #ccc;
+}
+/*end of discussion styling*/
