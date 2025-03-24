@@ -27,5 +27,3 @@ Example: `Home » About Us` as seen in the screenshot in the summary PDF.
 
 ## Repository
 This GitHub repository is used for full version control and collaborative development.
-
-> Finalized and Submitted for Milestone 2
