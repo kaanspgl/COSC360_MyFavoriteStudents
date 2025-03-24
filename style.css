@@ -471,4 +471,20 @@ button:hover {
     color: #444;
     border-bottom: 1px solid #ccc;
 }
+
+.edit-button, button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #1E6B42;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    margin-top: 15px;
+}
+
+.edit-button:hover, button:hover {
+    background-color: #145732;
+}
+
 /*end of discussion styling*/

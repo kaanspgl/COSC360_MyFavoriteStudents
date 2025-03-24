@@ -2,28 +2,31 @@
 session_start();
 include 'config.php';
 
-// Fetch listings with skill names and author
+$currentUserId = $_SESSION['user_id'] ?? null;
+
 $listings = [];
-$stmt = $conn->prepare("SELECT l.title, l.description, l.image, l.price, u.username, s.skill_name 
+$stmt = $conn->prepare("SELECT l.id, l.title, l.description, l.image, l.price, u.username, s.skill_name, l.user_id 
                         FROM listings l
                         JOIN users u ON l.user_id = u.id
                         JOIN skills s ON l.skill_id = s.id
                         ORDER BY l.created_at DESC");
 $stmt->execute();
-$stmt->bind_result($title, $description, $image, $price, $username, $skill_name);
-
+$stmt->bind_result($listing_id, $title, $description, $image, $price, $username, $skill_name, $listing_owner_id);
 while ($stmt->fetch()) {
     $listings[] = [
+        'id' => $listing_id,
         'title' => $title,
         'description' => $description,
         'image' => $image,
         'price' => $price,
         'username' => $username,
-        'skill' => $skill_name
+        'skill' => $skill_name,
+        'owner_id' => $listing_owner_id
     ];
 }
 $stmt->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -49,14 +52,29 @@ $stmt->close();
                     <p><strong>Skill:</strong> <?php echo htmlspecialchars($listing['skill']); ?></p>
                     <p><?php echo htmlspecialchars($listing['description']); ?></p>
                     <p><strong>Price:</strong> $<?php echo number_format($listing['price'], 2); ?></p>
+
                     <?php if ($listing['image']): ?>
                         <img src="<?php echo htmlspecialchars($listing['image']); ?>" alt="Listing Image">
                     <?php endif; ?>
+
                     <span class="listing-author">Posted by: <?php echo htmlspecialchars($listing['username']); ?></span>
+
+                    <?php if ($currentUserId === $listing['owner_id']): ?>
+                        <a href="edit-listing.php?id=<?php echo $listing['id']; ?>" class="edit-button">Edit Listing</a>
+                    <?php else: ?>
+                        <button onclick="purchaseListing('<?php echo htmlspecialchars($listing['title']); ?>')">Purchase</button>
+                    <?php endif; ?>
                 </div>
+
             <?php endforeach; ?>
         <?php endif; ?>
     </section>
+    <script>
+    function purchaseListing(listingTitle) {
+        alert("Your request to purchase '" + listingTitle + "' has been sent to the owner. They will be notified.");
+    }
+</script>
+
 </main>
 
 

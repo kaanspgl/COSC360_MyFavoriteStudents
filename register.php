@@ -1,8 +1,7 @@
 <?php
 session_start();
 
-include 'config.php';
-
+include ('config.php');
 // Form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize user input
