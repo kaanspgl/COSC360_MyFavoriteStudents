@@ -353,3 +353,29 @@ form { display: flex; flex-direction: column; }
     color: #444;
     border-bottom: 1px solid #ccc;
 }
+
+.breadcrumb-container {
+    background-color: #2E8B57;
+    padding: 5px 20px;
+    overflow-x: auto;  /* Enables scrolling if breadcrumbs overflow */
+}
+
+.breadcrumb {
+    color: #fff;
+    font-size: 14px;
+    white-space: nowrap; /* Prevents breaking into multiple lines */
+}
+
+.breadcrumb a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb span {
+    color: #f0f0f0;
+}
+

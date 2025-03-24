@@ -42,4 +42,31 @@ $profilePicture = $_SESSION['profile_picture'] ?? 'images/user.png';
             <?php endif; ?>
         </ul>
     </nav>
+
+        <!-- Breadcrumbs -->
+    <div class="breadcrumb-container">
+        <div class="breadcrumb">
+            <a href="index.php">Home</a>
+            <?php 
+            $currentPage = basename($_SERVER['PHP_SELF']);
+            if ($currentPage === 'show-listings.php') {
+                echo ' &raquo; <span>Listings</span>';
+            } elseif ($currentPage === 'discussion.php') {
+                echo ' &raquo; <span>Discussions</span>';
+            } elseif ($currentPage === 'thread.php') {
+                echo ' &raquo; <a href="discussion.php">Discussions</a> &raquo; <span>Thread</span>';
+            } elseif ($currentPage === 'create-listing.php') {
+                echo ' &raquo; <span>Create Listing</span>';
+            } elseif ($currentPage === 'profile.php') {
+                echo ' &raquo; <span>Profile</span>';
+            } elseif ($currentPage === 'about.php') {
+                echo ' &raquo; <span>About Us</span>';
+            } elseif ($currentPage === 'browse.php') {
+                echo ' &raquo; <span>Browse Skills</span>';
+            }
+            ?>
+        </div>
+    </div>
+
+
 </header>

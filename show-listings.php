@@ -111,7 +111,7 @@ $stmt->close();
 
     <script>
     function purchaseListing(listingTitle) {
-        alert("Your request to purchase '" + listingTitle + "' has been sent to the owner. They will be notified.");
+        alert("Your request to learn '" + listingTitle + "' has been sent to the owner. They will be notified.");
     }
     </script>
 </main>
