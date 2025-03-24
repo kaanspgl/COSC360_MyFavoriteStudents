@@ -79,9 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php endforeach; ?>
             </select>
 
-            <label>Price ($):</label>
-            <input type="number" name="price" step="0.01" required>
-
             <label>Upload an Image (optional):</label>
             <input type="file" name="image" accept="image/*">
 

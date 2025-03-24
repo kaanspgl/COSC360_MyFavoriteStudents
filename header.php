@@ -4,26 +4,9 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 $isLoggedIn = isset($_SESSION['user_id']);
-$profilePicture = 'images/user.png';
-$username = '';
+$username = $_SESSION['username'] ?? '';
+$profilePicture = $_SESSION['profile_picture'] ?? 'images/user.png';
 
-if ($isLoggedIn) {
-    include ('config.php');
-    if (!$conn->connect_error) {
-        $stmt = $conn->prepare("SELECT profile_picture, username FROM users WHERE id = ?");
-        $stmt->bind_param("i", $_SESSION['user_id']);
-        $stmt->execute();
-        $stmt->bind_result($dbProfilePic, $dbUsername);
-        if ($stmt->fetch()) {
-            if (!empty($dbProfilePic)) {
-                $profilePicture = $dbProfilePic;
-            }
-            $username = $dbUsername;
-        }
-        $stmt->close();
-        $conn->close();
-    }
-}
 ?>
 
 <header>
@@ -53,10 +36,10 @@ if ($isLoggedIn) {
                 </a></li>
                 <li><a href="register.php">Register</a></li>
             <?php endif; ?>
+
             <?php if ($isLoggedIn): ?>
                 <div class="welcome-msg">Welcome, <?php echo htmlspecialchars($username); ?>!</div>
             <?php endif; ?>
-
         </ul>
     </nav>
 </header>
