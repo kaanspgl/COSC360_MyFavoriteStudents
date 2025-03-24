@@ -1,8 +1,9 @@
 <?php
 $host = 'localhost';
-$db = 'ican_youcan';
-$user = 'root';
-$pass = '';
+$db = 'ka199967';
+$user = 'ka199967';
+$pass = 'Kaan906169!';  
+
 
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) {
