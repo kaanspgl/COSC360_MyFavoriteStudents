@@ -96,9 +96,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php endforeach; ?>
             </select>
 
-            <label>Price ($):</label>
-            <input type="number" name="price" step="0.01" value="<?php echo htmlspecialchars($price); ?>" required>
-
             <label>Current Image:</label><br>
             <?php if ($image): ?>
                 <img src="<?php echo htmlspecialchars($image); ?>" alt="Current Image" style="max-width: 200px;"><br>

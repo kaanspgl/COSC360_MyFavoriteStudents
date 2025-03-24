@@ -4,13 +4,26 @@ include 'config.php';
 
 $currentUserId = $_SESSION['user_id'] ?? null;
 
-// Fetch Listings
+// Skill filter check
+$skillFilter = isset($_GET['skill_id']) ? intval($_GET['skill_id']) : null;
+
+// Fetch Listings (with or without skill filter)
 $listings = [];
-$stmt = $conn->prepare("SELECT l.id, l.title, l.description, l.image, l.price, u.username, s.skill_name, l.user_id 
-                        FROM listings l
-                        JOIN users u ON l.user_id = u.id
-                        JOIN skills s ON l.skill_id = s.id
-                        ORDER BY l.created_at DESC");
+if ($skillFilter) {
+    $stmt = $conn->prepare("SELECT l.id, l.title, l.description, l.image, l.price, u.username, s.skill_name, l.user_id 
+                            FROM listings l
+                            JOIN users u ON l.user_id = u.id
+                            JOIN skills s ON l.skill_id = s.id
+                            WHERE s.id = ?
+                            ORDER BY l.created_at DESC");
+    $stmt->bind_param("i", $skillFilter);
+} else {
+    $stmt = $conn->prepare("SELECT l.id, l.title, l.description, l.image, l.price, u.username, s.skill_name, l.user_id 
+                            FROM listings l
+                            JOIN users u ON l.user_id = u.id
+                            JOIN skills s ON l.skill_id = s.id
+                            ORDER BY l.created_at DESC");
+}
 $stmt->execute();
 $stmt->bind_result($listing_id, $title, $description, $image, $price, $username, $skill_name, $listing_owner_id);
 while ($stmt->fetch()) {
@@ -25,7 +38,7 @@ while ($stmt->fetch()) {
         'owner_id' => $listing_owner_id
     ];
 }
-$stmt->close(); 
+$stmt->close();
 ?>
 
 <!DOCTYPE html>
@@ -41,11 +54,9 @@ $stmt->close();
 
 <main>
     <section class="listings-container">
-
         <?php if (empty($listings)): ?>
             <p style="text-align:center;">No listings found. <a href="create-listing.php">Be the first to create one!</a></p>
         <?php else: ?>
-
             <?php foreach ($listings as $listing): ?>
                 <div class="listing-card">
                     <h3><?php echo htmlspecialchars($listing['title']); ?></h3>
@@ -68,9 +79,7 @@ $stmt->close();
                 <!-- COMMENTS Section -->
                 <div class="comments-section">
                     <h4>Comments:</h4>
-
                     <?php
-                    // Prepare and fetch comments for this listing
                     $commentStmt = $conn->prepare("SELECT c.comment_text, u.username, c.created_at 
                                                    FROM listing_comments c 
                                                    JOIN users u ON c.user_id = u.id 
@@ -80,7 +89,6 @@ $stmt->close();
                         $commentStmt->bind_param("i", $listing['id']);
                         $commentStmt->execute();
                         $commentStmt->bind_result($comment_text, $comment_author, $comment_date);
-
                         while ($commentStmt->fetch()): ?>
                             <div class="comment-card">
                                 <p><strong><?php echo htmlspecialchars($comment_author); ?>:</strong> 
@@ -88,7 +96,6 @@ $stmt->close();
                                 <span class="comment-date"><?php echo $comment_date; ?></span>
                             </div>
                         <?php endwhile;
-
                         $commentStmt->close();
                     } else {
                         echo "<p>Error loading comments.</p>";
@@ -120,6 +127,6 @@ $stmt->close();
     <p>&copy; 2025 I Can / You Can. All rights reserved.</p>
 </footer>
 
-<?php $conn->close();?>
+<?php $conn->close(); ?>
 </body>
 </html>

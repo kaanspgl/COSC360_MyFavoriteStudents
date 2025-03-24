@@ -1,3 +1,18 @@
+<?php
+session_start();
+include 'config.php';
+
+// Fetch all skills from the database
+$skills = [];
+$result = $conn->query("SELECT id, skill_name, skill_description FROM skills");
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $skills[] = $row;
+    }
+}
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,53 +20,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Browse Skills - I Can / You Can</title>
     <link rel="stylesheet" href="style.css">
-    <script defer src="browse.js"></script>
 </head>
 <body>
 <?php include 'header.php'; ?>
 
-    
+<main>
+    <section class="search-container">
+        <input type="text" id="search" placeholder="Search for skills..." onkeyup="filterSkills()">
+    </section>
 
-    <main>
-        <!-- Placeholder Header -->
-        <section class="placeholder-header">
-            <h2>This is a placeholder until we set up the PHP</h2>
-        </section>
-
-        <section class="search-container">
-            <input type="text" id="search" placeholder="Search for skills..." onkeyup="filterSkills()">
-        </section>
-
-        <section class="skills-list">
+    <section class="skills-list" id="skills-list">
+        <?php foreach ($skills as $skill): ?>
             <div class="skill-card">
-                <h3>Web Development</h3>
-                <p>Learn how to build websites using HTML, CSS, and JavaScript.</p>
+                <h3><?php echo htmlspecialchars($skill['skill_name']); ?></h3>
+                <p><?php echo htmlspecialchars($skill['skill_description']); ?></p>
                 <div class="card-footer">
-                    <button class="learn-more">Learn More</button>
+                    <a href="show-listings.php?skill_id=<?php echo $skill['id']; ?>" class="learn-more">Learn Now!</a>
                 </div>
             </div>
-        
-            <div class="skill-card">
-                <h3>Photography</h3>
-                <p>Master the art of capturing stunning photos with your camera.</p>
-                <div class="card-footer">
-                    <button class="learn-more">Learn More</button>
-                </div>
-            </div>
-        
-            <div class="skill-card">
-                <h3>Cooking</h3>
-                <p>Explore different cuisines and enhance your culinary skills.</p>
-                <div class="card-footer">
-                    <button class="learn-more">Learn More</button>
-                </div>
-            </div>
-        </section>
-        
-    </main>
+        <?php endforeach; ?>
+    </section>
+</main>
 
-    <footer>
-        <p>&copy; 2025 I Can / You Can. All rights reserved.</p>
-    </footer>
+<footer>
+    <p>&copy; 2025 I Can / You Can. All rights reserved.</p>
+</footer>
+
+<script>
+// Simple search functionality
+function filterSkills() {
+    const input = document.getElementById("search").value.toLowerCase();
+    const skills = document.getElementsByClassName("skill-card");
+
+    Array.from(skills).forEach(skill => {
+        const title = skill.querySelector("h3").textContent.toLowerCase();
+        if (title.includes(input)) {
+            skill.style.display = "block";
+        } else {
+            skill.style.display = "none";
+        }
+    });
+}
+</script>
 </body>
 </html>
