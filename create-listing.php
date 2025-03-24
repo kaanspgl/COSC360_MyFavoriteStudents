@@ -10,6 +10,7 @@
 <body>
 <?php include 'header.php'; ?>
 
+<<<<<<< Updated upstream
 
     <main>
         <section class="placeholder-container">
@@ -22,5 +23,40 @@
     <footer>
         <p>&copy; 2025 I Can / You Can. All rights reserved.</p>
     </footer>
+=======
+<main>
+    <section class="form-container">
+        <h2>Create a New Listing</h2>
+        <form action="create-listing.php" method="POST" enctype="multipart/form-data">
+            <label>Title:</label>
+            <input type="text" name="title" required>
+
+            <label>Description:</label>
+            <textarea name="description" rows="4" required></textarea>
+
+            <label>Skill Category:</label>
+            <select name="skill_id" required>
+                <option value="">-- Select Skill --</option>
+                <?php foreach ($skills as $skill): ?>
+                    <option value="<?php echo $skill['id']; ?>"><?php echo htmlspecialchars($skill['name']); ?></option>
+                <?php endforeach; ?>
+            </select>
+
+            <label>Price ($):</label>
+            <input type="number" name="price" step="0.01" required>
+
+            <label>Upload an Image (optional):</label>
+            <input type="file" name="image" accept="image/*">
+
+            <button type="submit">Create Listing</button>
+        </form>
+    </section>
+</main>
+
+
+<footer>
+    <p>&copy; 2025 I Can / You Can. All rights reserved.</p>
+</footer>
+>>>>>>> Stashed changes
 </body>
 </html>

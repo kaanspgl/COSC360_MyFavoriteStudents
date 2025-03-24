@@ -347,6 +347,46 @@ button:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     font-size: 18px;
     color: #333;
+    .form-container, .listings-container {
+        width: 60%;
+        margin: 30px auto;
+        background: #fff;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    
+    .form-container h2, .listings-container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #1E6B42;
+    }
+    
+    input[type="text"], input[type="number"], select, textarea, input[type="file"] {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+    }
+    
+    button[type="submit"] {
+        background-color: #1E6B42;
+        color: #fff;
+        border: none;
+        padding: 15px;
+        width: 100%;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    
+    button[type="submit"]:hover {
+        background-color: #145732;
+    }
+    
+    
+    
 }
 /*end of create listing styling*/
 /*Show listing styling*/
@@ -360,31 +400,32 @@ button:hover {
 }
 
 .listing-card {
-    background-color: #f9f9f9;
-    padding: 20px;
+    background: #fff;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 300px;
-    text-align: center;
+    padding: 20px;
+    margin: 20px auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    max-width: 600px;
+    text-align: left;
 }
 
 .listing-card h3 {
-    color: #2E8B57;
+    color: #1E6B42;
+    margin-bottom: 10px;
 }
 
-.listing-card p {
-    font-size: 14px;
+.listing-card img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.listing-card .listing-author {
+    font-style: italic;
+    margin-top: 15px;
+    display: block;
     color: #555;
 }
-
-.listing-author {
-    display: block;
-    margin-top: 10px;
-    font-size: 12px;
-    font-style: italic;
-    color: #777;
-}
-
 /*end of Show listing styling*/
 /*discussion styling*/
 .discussion-container {
