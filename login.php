@@ -1,15 +1,7 @@
 <?php 
 session_start();
 
-$host = 'localhost';
-$db = 'ican_youcan';
-$user = 'root';
-$pass = '';
-
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include ('config.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
