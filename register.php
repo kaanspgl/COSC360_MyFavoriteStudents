@@ -1,10 +1,9 @@
 <?php
 session_start();
-
 include ('config.php');
+
 // Form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Sanitize user input
     $username = htmlspecialchars(trim($_POST['username']));
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
     $password = $_POST['password'];
@@ -19,11 +18,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Hash the password
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        // Handle profile picture upload
         $profilePicPath = '';
         if (isset($_FILES['profile-picture']) && $_FILES['profile-picture']['error'] === UPLOAD_ERR_OK) {
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            $maxSize = 2 * 1024 * 1024;
+
+            $fileType = mime_content_type($_FILES['profile-picture']['tmp_name']);
+            $fileSize = $_FILES['profile-picture']['size'];
+
+            if (!in_array($fileType, $allowedTypes)) {
+                echo "<script>alert('Only JPG, PNG, or GIF images are allowed.');</script>";
+                exit;
+            }
+
+            if ($fileSize > $maxSize) {
+                echo "<script>alert('Profile picture must be less than 2MB.');</script>";
+                exit;
+            }
+
             $targetDir = "uploads/";
-            if (!is_dir($targetDir)) mkdir($targetDir); // Create directory if not exists
+            if (!is_dir($targetDir)) mkdir($targetDir);
             $profilePicPath = $targetDir . basename($_FILES['profile-picture']['name']);
             move_uploaded_file($_FILES['profile-picture']['tmp_name'], $profilePicPath);
         }
@@ -43,7 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<!-- HTML Starts Below -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
