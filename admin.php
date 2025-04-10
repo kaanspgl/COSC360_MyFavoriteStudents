@@ -87,6 +87,104 @@ if ($logResult && $logResult->num_rows > 0) {
         <h2>Admin Dashboard</h2>
         <p>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>. You have administrative privileges.</p>
 
+        <?php
+        // Admin stats queries
+        $userCount     = $conn->query("SELECT COUNT(*) FROM users")->fetch_row()[0];
+        $listingCount  = $conn->query("SELECT COUNT(*) FROM listings")->fetch_row()[0];
+        $commentCount  = $conn->query("SELECT COUNT(*) FROM listing_comments")->fetch_row()[0];
+        $threadCount = $conn->query("SELECT COUNT(*) FROM discussion_threads")->fetch_row()[0];
+        $logCount      = $conn->query("SELECT COUNT(*) FROM admin_logs")->fetch_row()[0];
+        ?>
+
+        <!-- Admin quick stats -->
+        <div class="admin-stats" style="margin-top: 20px; padding: 15px; background: #f9f9f9; border: 1px solid #ccc; border-radius: 10px;">
+            <h3 style="margin-top: 0;">Site Statistics</h3>
+            <ul style="list-style: none; padding-left: 0;">
+                <li><strong>Total Users:</strong> <?php echo $userCount; ?></li>
+                <li><strong>Total Listings:</strong> <?php echo $listingCount; ?></li>
+                <li><strong>Total Comments:</strong> <?php echo $commentCount; ?></li>
+                <li><strong>Total Threads:</strong> <?php echo $threadCount; ?></li>
+                <li><strong>Total Admin Actions Logged:</strong> <?php echo $logCount; ?></li>
+            </ul>
+        </div>
+
+
+        <!-- Chart Container -->
+        <div style="max-width: 800px; margin: 40px auto;">
+            <h3 style="text-align: center;">Listings Created Per User</h3>
+            <canvas id="listingChart"></canvas>
+        </div>
+
+        <!-- Chart.js Script -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch("listings-chart-data.php")
+                .then(res => res.json())
+                .then(data => {
+                    const ctx = document.getElementById('listingChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.usernames,
+                            datasets: [{
+                                label: 'Number of Listings',
+                                data: data.counts,
+                                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1,
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: { beginAtZero: true }
+                            }
+                        }
+                    });
+                });
+        });
+        </script>
+
+        <!-- Pie Chart Container -->
+        <div style="max-width: 600px; margin: 50px auto;">
+            <h3 style="text-align: center;">Listings by Skill Category</h3>
+            <canvas id="skillChart"></canvas>
+        </div>
+
+        <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch("skill-chart-data.php")
+                .then(res => res.json())
+                .then(data => {
+                    const ctx = document.getElementById('skillChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            labels: data.skills,
+                            datasets: [{
+                                data: data.counts,
+                                backgroundColor: [
+                                    '#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#E91E63',
+                                    '#FF9800', '#009688', '#3F51B5', '#795548', '#9C27B0'
+                                ],
+                                borderColor: '#fff',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+                });
+        });
+        </script>
+
+
         <!-- Search form -->
         <form method="GET" style="margin-top: 20px;">
             <input type="text" name="query" placeholder="Search by username or email" value="<?php echo htmlspecialchars($searchQuery ?? ''); ?>">
