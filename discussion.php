@@ -2,8 +2,14 @@
 session_start();
 include 'config.php';
 $currentUserId = $_SESSION['user_id'] ?? null;
-?>
 
+// Load skill categories for dropdowns
+$skills = [];
+$skillQuery = $conn->query("SELECT id, skill_name FROM skills ORDER BY skill_name ASC");
+while ($row = $skillQuery->fetch_assoc()) {
+    $skills[] = $row;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,6 +37,8 @@ $currentUserId = $_SESSION['user_id'] ?? null;
                 });
             });
         }
+
+        document.getElementById("category-filter").addEventListener("change", fetchThreads);
     });
 
     function fetchThreads() {
@@ -38,15 +46,32 @@ $currentUserId = $_SESSION['user_id'] ?? null;
             .then(response => response.json())
             .then(data => {
                 const container = document.getElementById("discussion-container");
-                container.innerHTML = "";
+                const selectedCategory = document.getElementById("category-filter").value;
+
+                const grouped = {};
                 data.forEach(thread => {
-                    container.innerHTML += `
-                        <div class="discussion-card">
-                            <h3><a href="thread.php?id=${thread.id}">${thread.title}</a></h3>
-                            <p>${thread.content}</p>
-                            <span class="discussion-meta">Posted by ${thread.username} • ${thread.created_at}</span>
-                        </div>`;
+                    if (!grouped[thread.category]) grouped[thread.category] = [];
+                    grouped[thread.category].push(thread);
                 });
+
+                container.innerHTML = "";
+                for (const category in grouped) {
+                    if (selectedCategory !== "all" && selectedCategory !== category) continue;
+
+                    container.innerHTML += `<h3 style="margin-top:30px;">${category}</h3>`;
+                    grouped[category].forEach(thread => {
+                        container.innerHTML += `
+                            <div class="discussion-card">
+                                <h4><a href="thread.php?id=${thread.id}">${thread.title}</a></h4>
+                                <p>${thread.content}</p>
+                                <span class="discussion-meta">Posted by ${thread.username} • ${thread.created_at}</span>
+                            </div>`;
+                    });
+                }
+
+                if (container.innerHTML === "") {
+                    container.innerHTML = "<p style='text-align:center;'>No threads in this category.</p>";
+                }
             });
     }
     </script>
@@ -60,6 +85,18 @@ $currentUserId = $_SESSION['user_id'] ?? null;
         <p>Click on a thread to view and join the discussion!</p>
     </section>
 
+    <div style="text-align: center; margin-bottom: 20px;">
+        <label for="category-filter"><strong>Filter by Skill:</strong></label>
+        <select id="category-filter">
+            <option value="all">All Skills</option>
+            <?php foreach ($skills as $skill): ?>
+                <option value="<?php echo htmlspecialchars($skill['skill_name']); ?>">
+                    <?php echo htmlspecialchars($skill['skill_name']); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+
     <?php if ($currentUserId): ?>
     <section class="profile-form-container">
         <h3>Create a New Thread</h3>
@@ -70,10 +107,16 @@ $currentUserId = $_SESSION['user_id'] ?? null;
             <label for="content">Content:</label>
             <textarea id="content" name="content" required></textarea>
 
-            <?php if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1): ?>
-                <button type="submit">Post Thread</button>
-            <?php endif; ?>
+            <label for="category">Skill Category:</label>
+            <select id="category" name="category" required>
+                <?php foreach ($skills as $skill): ?>
+                    <option value="<?php echo htmlspecialchars($skill['skill_name']); ?>">
+                        <?php echo htmlspecialchars($skill['skill_name']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
 
+            <button type="submit">Post Thread</button>
         </form>
     </section>
     <?php else: ?>
