@@ -27,6 +27,17 @@ if ($currentUserId !== $owner_id) {
     die("Unauthorized: You do not own this listing.");
 }
 
+// Handle deletion request
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_listing'])) {
+    $del_stmt = $conn->prepare("DELETE FROM listings WHERE id = ? AND user_id = ?");
+    $del_stmt->bind_param("ii", $listing_id, $currentUserId);
+    $del_stmt->execute();
+    $del_stmt->close();
+
+    header('Location: show-listings.php?deleted=1');
+    exit;
+}
+
 // Fetch skills for dropdown
 $skills = [];
 $skill_query = $conn->prepare("SELECT id, skill_name FROM skills ORDER BY skill_name ASC");
@@ -37,8 +48,8 @@ while ($skill_query->fetch()) {
 }
 $skill_query->close();
 
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// Handle form submission for updating
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['delete_listing'])) {
     $new_title = htmlspecialchars(trim($_POST['title']));
     $new_description = htmlspecialchars(trim($_POST['description']));
     $new_skill_id = intval($_POST['skill_id']);
@@ -96,6 +107,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php endforeach; ?>
             </select>
 
+            <label>Price:</label>
+            <input type="number" step="0.01" name="price" value="<?php echo htmlspecialchars($price); ?>" required>
+
             <label>Current Image:</label><br>
             <?php if ($image): ?>
                 <img src="<?php echo htmlspecialchars($image); ?>" alt="Current Image" style="max-width: 200px;"><br>
@@ -107,6 +121,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="file" name="image" accept="image/*">
 
             <button type="submit">Save Changes</button>
+        </form>
+
+        <!-- Delete Form -->
+        <form action="edit-listing.php?id=<?php echo $listing_id; ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete this listing?');" style="margin-top: 20px;">
+            <input type="hidden" name="delete_listing" value="1">
+            <button type="submit" class="edit-button" style="background-color: red;">Delete Listing</button>
         </form>
     </section>
 </main>
