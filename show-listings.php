@@ -4,10 +4,8 @@ include 'config.php';
 
 $currentUserId = $_SESSION['user_id'] ?? null;
 
-// Temporarily disable skill filter to ensure listings show
 $skillFilter = isset($_GET['skill_id']) ? intval($_GET['skill_id']) : null;
 
-// Fetch Listings (with or without skill filter)
 $listings = [];
 if ($skillFilter) {
     $stmt = $conn->prepare("SELECT listings.id, listings.title, listings.description, listings.image, listings.price, users.username, skills.skill_name, listings.user_id 
@@ -48,6 +46,19 @@ $stmt->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Show Listings - I Can / You Can</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .toggle-comments-button {
+            background-color: #3a885d;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 6px;
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
 <?php include 'header.php'; ?>
@@ -64,59 +75,69 @@ $stmt->close();
             <p style="text-align:center;">No listings found. <a href="create-listing.php">Be the first to create one!</a></p>
         <?php else: ?>
             <?php foreach ($listings as $listing): ?>
-                <div class="listing-card">
-                    <h3><?php echo htmlspecialchars($listing['title']); ?></h3>
-                    <p><strong>Skill:</strong> <?php echo htmlspecialchars($listing['skill']); ?></p>
-                    <p><?php echo htmlspecialchars($listing['description']); ?></p>
+                <div class="listing-wrapper" style="display: flex; gap: 20px; align-items: flex-start; margin-bottom: 40px;">
 
-                    <?php if (!empty($listing['image'])): ?>
-                        <img src="<?php echo htmlspecialchars($listing['image']); ?>" alt="Listing Image">
-                    <?php endif; ?>
+                    <!-- Listing Content -->
+                    <div class="listing-card" style="flex: 2;">
+                        <h3><?php echo htmlspecialchars($listing['title']); ?></h3>
+                        <p><strong>Skill:</strong> <?php echo htmlspecialchars($listing['skill']); ?></p>
+                        <p><?php echo htmlspecialchars($listing['description']); ?></p>
 
-                    <span class="listing-author">Posted by: <?php echo htmlspecialchars($listing['username']); ?></span>
+                        <?php if (!empty($listing['image'])): ?>
+                            <img src="<?php echo htmlspecialchars($listing['image']); ?>" alt="Listing Image" style="max-width: 100%; border-radius: 10px;">
+                        <?php endif; ?>
 
-                    <?php if ($currentUserId === $listing['owner_id']): ?>
-                        <a href="edit-listing.php?id=<?php echo $listing['id']; ?>" class="edit-button">Edit Listing</a>
-                    <?php else: ?>
-                        <button onclick="purchaseListing('<?php echo htmlspecialchars($listing['title']); ?>')">Request Service</button>
-                    <?php endif; ?>
-                </div>
+                        <span class="listing-author"><em>Posted by: <?php echo htmlspecialchars($listing['username']); ?></em></span><br>
 
-                <!-- COMMENTS Section -->
-                <div class="comments-section">
-                    <h4>Comments:</h4>
-                    <?php
-                    $commentStmt = $conn->prepare("SELECT c.comment_text, u.username, c.created_at 
-                                                   FROM listing_comments c 
-                                                   JOIN users u ON c.user_id = u.id 
-                                                   WHERE c.listing_id = ? 
-                                                   ORDER BY c.created_at DESC");
-                    if ($commentStmt) {
-                        $commentStmt->bind_param("i", $listing['id']);
-                        $commentStmt->execute();
-                        $commentStmt->bind_result($comment_text, $comment_author, $comment_date);
-                        while ($commentStmt->fetch()): ?>
-                            <div class="comment-card">
-                                <p><strong><?php echo htmlspecialchars($comment_author); ?>:</strong>
-                                <?php echo htmlspecialchars($comment_text); ?></p>
-                                <span class="comment-date"><?php echo htmlspecialchars($comment_date); ?></span>
-                            </div>
-                        <?php endwhile;
-                        $commentStmt->close();
-                    } else {
-                        echo "<p>Error loading comments.</p>";
-                    }
-                    ?>
+                        <?php if ($currentUserId === $listing['owner_id']): ?>
+                            <a href="edit-listing.php?id=<?php echo $listing['id']; ?>" class="edit-button">Edit Listing</a>
+                        <?php else: ?>
+                            <button onclick="purchaseListing('<?php echo htmlspecialchars($listing['title']); ?>')">Request Service</button>
+                        <?php endif; ?>
+                    </div>
 
-                    <?php if (isset($_SESSION['user_id'])): ?>
-                        <form action="add-comment.php" method="POST" class="comment-form">
-                            <input type="hidden" name="listing_id" value="<?php echo $listing['id']; ?>">
-                            <textarea name="comment_text" placeholder="Add a comment..." required></textarea>
-                            <button type="submit">Post Comment</button>
-                        </form>
-                    <?php else: ?>
-                        <p><em>Login to add a comment</em></p>
-                    <?php endif; ?>
+                    <!-- Comment Section Panel -->
+                    <div class="listing-comments" style="flex: 1; min-width: 250px;">
+                        <button class="toggle-comments-button" onclick="toggleComments('comments-<?php echo $listing['id']; ?>')">
+                            Show Comments
+                        </button>
+
+                        <div id="comments-<?php echo $listing['id']; ?>" class="comments-section" style="display: none; margin-top: 10px;">
+                            <h4>Comments:</h4>
+                            <?php
+                            $commentStmt = $conn->prepare("SELECT c.comment_text, u.username, c.created_at 
+                                                        FROM listing_comments c 
+                                                        JOIN users u ON c.user_id = u.id 
+                                                        WHERE c.listing_id = ? 
+                                                        ORDER BY c.created_at DESC");
+                            if ($commentStmt) {
+                                $commentStmt->bind_param("i", $listing['id']);
+                                $commentStmt->execute();
+                                $commentStmt->bind_result($comment_text, $comment_author, $comment_date);
+                                while ($commentStmt->fetch()): ?>
+                                    <div class="comment-card" style="background:#f4f4f4; padding:8px; border-radius:6px; margin-bottom:6px;">
+                                        <p><strong><?php echo htmlspecialchars($comment_author); ?>:</strong> 
+                                        <?php echo htmlspecialchars($comment_text); ?></p>
+                                        <span class="comment-date" style="font-size: 0.85em;"><?php echo $comment_date; ?></span>
+                                    </div>
+                                <?php endwhile;
+                                $commentStmt->close();
+                            } else {
+                                echo "<p>Error loading comments.</p>";
+                            }
+                            ?>
+
+                            <?php if (isset($_SESSION['user_id'])): ?>
+                                <form action="add-comment.php" method="POST" class="comment-form" style="margin-top:10px;">
+                                    <input type="hidden" name="listing_id" value="<?php echo $listing['id']; ?>">
+                                    <textarea name="comment_text" placeholder="Add a comment..." required></textarea>
+                                    <button type="submit">Post Comment</button>
+                                </form>
+                            <?php else: ?>
+                                <p><em>Login to add a comment</em></p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                 </div>
             <?php endforeach; ?>
         <?php endif; ?>
@@ -125,6 +146,18 @@ $stmt->close();
     <script>
     function purchaseListing(listingTitle) {
         alert("Your request to learn '" + listingTitle + "' has been sent to the owner. They will be notified.");
+    }
+
+    function toggleComments(id) {
+        const el = document.getElementById(id);
+        const btn = el.previousElementSibling;
+        if (el.style.display === "none") {
+            el.style.display = "block";
+            btn.textContent = "Hide Comments";
+        } else {
+            el.style.display = "none";
+            btn.textContent = "Show Comments";
+        }
     }
     </script>
 </main>
