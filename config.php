@@ -2,7 +2,7 @@
 $host = 'localhost';
 $db = 'ka199967';
 $user = 'ka199967';
-$pass = 'Kaan906169!';  
+$pass = 'ka199967';  
 
 $conn = new mysqli($host, $user, $pass, $db);
 
