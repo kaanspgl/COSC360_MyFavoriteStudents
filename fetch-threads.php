@@ -1,17 +1,18 @@
 <?php
-session_start();
 include 'config.php';
 
-$result = $conn->query("SELECT d.id, d.title, d.content, d.created_at, u.username 
-                        FROM discussion_threads d 
-                        JOIN users u ON d.user_id = u.id 
-                        ORDER BY d.created_at DESC");
+$sql = "SELECT t.id, t.title, t.content, t.created_at, u.username, t.category
+        FROM discussion_threads t
+        JOIN users u ON t.user_id = u.id
+        ORDER BY t.created_at DESC";
 
+$result = $conn->query($sql);
 $threads = [];
+
 while ($row = $result->fetch_assoc()) {
     $threads[] = $row;
 }
+
 header('Content-Type: application/json');
 echo json_encode($threads);
-$conn->close();
 ?>
