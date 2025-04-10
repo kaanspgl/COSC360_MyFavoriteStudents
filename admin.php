@@ -205,7 +205,6 @@ if ($logResult && $logResult->num_rows > 0) {
                     <p><strong>Skill:</strong> <?php echo htmlspecialchars($listing['skill']); ?></p>
                     <p><strong>Description:</strong> <?php echo htmlspecialchars($listing['description']); ?></p>
                     <p><strong>Posted by:</strong> <?php echo htmlspecialchars($listing['username']); ?></p>
-                    <p><strong>Price:</strong> $<?php echo number_format($listing['price'], 2); ?></p>
                     <?php if (!empty($listing['image'])): ?>
                         <img src="<?php echo htmlspecialchars($listing['image']); ?>" alt="Listing Image" style="max-width:200px;"><br>
                     <?php endif; ?>
