@@ -73,6 +73,13 @@ $stmt->close();
                         <img src="<?php echo htmlspecialchars($listing['image']); ?>" alt="Listing Image">
                     <?php endif; ?>
 
+                    <!-- Listing Content -->
+                    <div class="listing-card" style="flex: 2;">
+                        <h3><?php echo html_entity_decode($listing['title']); ?></h3>
+                        <p><strong>Skill:</strong> <?php echo htmlspecialchars($listing['skill']); ?></p>
+                        <p><?php echo htmlspecialchars($listing['description']); ?></p>
+
+
                     <span class="listing-author">Posted by: <?php echo htmlspecialchars($listing['username']); ?></span>
 
                     <?php if ($currentUserId === $listing['owner_id']): ?>

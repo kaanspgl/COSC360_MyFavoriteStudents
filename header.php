@@ -4,9 +4,9 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 $isLoggedIn = isset($_SESSION['user_id']);
+$userId = $_SESSION['user_id'] ?? null;
 $username = $_SESSION['username'] ?? '';
 $profilePicture = $_SESSION['profile_picture'] ?? 'images/user.png';
-
 ?>
 
 <header>
@@ -30,9 +30,11 @@ $profilePicture = $_SESSION['profile_picture'] ?? 'images/user.png';
             <li><a href="discussion.php">Discussions</a></li>
 
             <?php if ($isLoggedIn): ?>
-                <li><a href="profile.php">
-                    <img src="<?php echo htmlspecialchars($profilePicture); ?>" alt="My Profile" class="nav-profile-icon">
-                </a></li>
+                <li>
+                    <a href="view-profile.php?id=<?php echo $userId; ?>">
+                        <img src="<?php echo htmlspecialchars($profilePicture); ?>" alt="My Profile" class="nav-profile-icon">
+                    </a>
+                </li>
                 <li><a href="logout.php">Logout</a></li>
             <?php else: ?>
                 <li><a href="login.php">
@@ -48,11 +50,10 @@ $profilePicture = $_SESSION['profile_picture'] ?? 'images/user.png';
             <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1): ?>
                 <li><a href="admin.php">Admin</a></li>
             <?php endif; ?>
-
         </ul>
     </nav>
 
-        <!-- Breadcrumbs -->
+    <!-- Breadcrumbs -->
     <div class="breadcrumb-container">
         <div class="breadcrumb">
             <a href="index.php">Home</a>
@@ -76,6 +77,4 @@ $profilePicture = $_SESSION['profile_picture'] ?? 'images/user.png';
             ?>
         </div>
     </div>
-
-
 </header>
