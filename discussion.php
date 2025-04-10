@@ -70,7 +70,10 @@ $currentUserId = $_SESSION['user_id'] ?? null;
             <label for="content">Content:</label>
             <textarea id="content" name="content" required></textarea>
 
-            <button type="submit">Post Thread</button>
+            <?php if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1): ?>
+                <button type="submit">Post Thread</button>
+            <?php endif; ?>
+
         </form>
     </section>
     <?php else: ?>

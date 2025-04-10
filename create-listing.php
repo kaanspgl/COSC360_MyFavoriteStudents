@@ -2,6 +2,11 @@
 session_start();
 include 'config.php';
 
+if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1) {
+    header("Location: index.php");
+    exit();
+}
+
 // Redirect if not logged in
 if (!isset($_SESSION['user_id'])) {
     header('Location: register.php');

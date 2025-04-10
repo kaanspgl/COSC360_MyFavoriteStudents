@@ -21,7 +21,11 @@ $profilePicture = $_SESSION['profile_picture'] ?? 'images/user.png';
             <li><a href="index.php">Home</a></li>
             <li><a href="browse.php">Browse Skills</a></li>
             <li><a href="about.php">About Us</a></li>
-            <li><a href="create-listing.php">Create Listing</a></li>
+            
+            <?php if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1): ?>
+                <li><a href="create-listing.php">Create Listing</a></li>
+            <?php endif; ?>
+
             <li><a href="show-listings.php">Show Listings</a></li>
             <li><a href="discussion.php">Discussions</a></li>
 
@@ -40,6 +44,11 @@ $profilePicture = $_SESSION['profile_picture'] ?? 'images/user.png';
             <?php if ($isLoggedIn): ?>
                 <div class="welcome-msg">Welcome, <?php echo htmlspecialchars($username); ?>!</div>
             <?php endif; ?>
+
+            <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1): ?>
+                <li><a href="admin.php">Admin</a></li>
+            <?php endif; ?>
+
         </ul>
     </nav>
 

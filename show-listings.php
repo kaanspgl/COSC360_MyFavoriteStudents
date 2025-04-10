@@ -4,25 +4,25 @@ include 'config.php';
 
 $currentUserId = $_SESSION['user_id'] ?? null;
 
-// Skill filter check
+// Temporarily disable skill filter to ensure listings show
 $skillFilter = isset($_GET['skill_id']) ? intval($_GET['skill_id']) : null;
 
 // Fetch Listings (with or without skill filter)
 $listings = [];
 if ($skillFilter) {
-    $stmt = $conn->prepare("SELECT l.id, l.title, l.description, l.image, l.price, u.username, s.skill_name, l.user_id 
-                            FROM listings l
-                            JOIN users u ON l.user_id = u.id
-                            JOIN skills s ON l.skill_id = s.id
-                            WHERE s.id = ?
-                            ORDER BY l.created_at DESC");
+    $stmt = $conn->prepare("SELECT listings.id, listings.title, listings.description, listings.image, listings.price, users.username, skills.skill_name, listings.user_id 
+                            FROM listings
+                            JOIN users ON listings.user_id = users.id
+                            JOIN skills ON listings.skill_id = skills.id
+                            WHERE skills.id = ?
+                            ORDER BY listings.id DESC");
     $stmt->bind_param("i", $skillFilter);
 } else {
-    $stmt = $conn->prepare("SELECT l.id, l.title, l.description, l.image, l.price, u.username, s.skill_name, l.user_id 
-                            FROM listings l
-                            JOIN users u ON l.user_id = u.id
-                            JOIN skills s ON l.skill_id = s.id
-                            ORDER BY l.created_at DESC");
+    $stmt = $conn->prepare("SELECT listings.id, listings.title, listings.description, listings.image, listings.price, users.username, skills.skill_name, listings.user_id 
+                            FROM listings
+                            JOIN users ON listings.user_id = users.id
+                            JOIN skills ON listings.skill_id = skills.id
+                            ORDER BY listings.id DESC");
 }
 $stmt->execute();
 $stmt->bind_result($listing_id, $title, $description, $image, $price, $username, $skill_name, $listing_owner_id);
@@ -53,6 +53,12 @@ $stmt->close();
 <?php include 'header.php'; ?>
 
 <main>
+    <?php if (isset($_GET['deleted'])): ?>
+        <p style="text-align: center; color: green; font-weight: bold;">
+            Listing has been successfully deleted.
+        </p>
+    <?php endif; ?>
+
     <section class="listings-container">
         <?php if (empty($listings)): ?>
             <p style="text-align:center;">No listings found. <a href="create-listing.php">Be the first to create one!</a></p>
@@ -63,7 +69,7 @@ $stmt->close();
                     <p><strong>Skill:</strong> <?php echo htmlspecialchars($listing['skill']); ?></p>
                     <p><?php echo htmlspecialchars($listing['description']); ?></p>
 
-                    <?php if ($listing['image']): ?>
+                    <?php if (!empty($listing['image'])): ?>
                         <img src="<?php echo htmlspecialchars($listing['image']); ?>" alt="Listing Image">
                     <?php endif; ?>
 
@@ -91,9 +97,9 @@ $stmt->close();
                         $commentStmt->bind_result($comment_text, $comment_author, $comment_date);
                         while ($commentStmt->fetch()): ?>
                             <div class="comment-card">
-                                <p><strong><?php echo htmlspecialchars($comment_author); ?>:</strong> 
+                                <p><strong><?php echo htmlspecialchars($comment_author); ?>:</strong>
                                 <?php echo htmlspecialchars($comment_text); ?></p>
-                                <span class="comment-date"><?php echo $comment_date; ?></span>
+                                <span class="comment-date"><?php echo htmlspecialchars($comment_date); ?></span>
                             </div>
                         <?php endwhile;
                         $commentStmt->close();
