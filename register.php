@@ -23,7 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
             $maxSize = 2 * 1024 * 1024;
 
-            $fileType = mime_content_type($_FILES['profile-picture']['tmp_name']);
+            $fileTmpPath = $_FILES['profile-picture']['tmp_name'];
+            $fileType = mime_content_type($fileTmpPath);
             $fileSize = $_FILES['profile-picture']['size'];
 
             if (!in_array($fileType, $allowedTypes)) {
@@ -37,9 +38,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $targetDir = "uploads/";
-            if (!is_dir($targetDir)) mkdir($targetDir);
-            $profilePicPath = $targetDir . basename($_FILES['profile-picture']['name']);
-            move_uploaded_file($_FILES['profile-picture']['tmp_name'], $profilePicPath);
+            if (!is_dir($targetDir)) mkdir($targetDir, 0755, true);
+
+            // Create a unique filename to avoid overwrites
+            $fileExt = pathinfo($_FILES['profile-picture']['name'], PATHINFO_EXTENSION);
+            $newFileName = uniqid("profile_", true) . '.' . $fileExt;
+            $profilePicPath = $targetDir . $newFileName;
+
+            if (!move_uploaded_file($fileTmpPath, $profilePicPath)) {
+                echo "<script>alert('Failed to move uploaded file.');</script>";
+                exit;
+            }
         }
 
         // Insert into database

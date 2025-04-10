@@ -73,7 +73,10 @@ $profilePicture = $_SESSION['profile_picture'] ?? 'images/user.png';
                 echo ' &raquo; <span>About Us</span>';
             } elseif ($currentPage === 'browse.php') {
                 echo ' &raquo; <span>Browse Skills</span>';
+            } elseif ($currentPage === 'view-profile.php') {
+                echo ' &raquo; <span>User Profile</span>';
             }
+            
             ?>
         </div>
     </div>
