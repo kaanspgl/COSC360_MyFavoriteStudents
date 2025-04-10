@@ -45,10 +45,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $newFileName = uniqid("profile_", true) . '.' . $fileExt;
             $profilePicPath = $targetDir . $newFileName;
 
-            if (!move_uploaded_file($fileTmpPath, $profilePicPath)) {
-                echo "<script>alert('Failed to move uploaded file.');</script>";
+            if (!move_uploaded_file($_FILES['profile-picture']['tmp_name'], $profilePicPath)) {
+                echo "<script>alert('Upload failed!');</script>";
+            
+                echo "<pre>";
+                print_r([
+                    'targetDirExists' => is_dir($targetDir),
+                    'isWritable' => is_writable($targetDir),
+                    'tmp_name' => $_FILES['profile-picture']['tmp_name'],
+                    'error' => $_FILES['profile-picture']['error'],
+                    'fileSize' => $_FILES['profile-picture']['size'],
+                    'mime' => mime_content_type($_FILES['profile-picture']['tmp_name']),
+                    'destination' => $profilePicPath,
+                    'permissions' => substr(sprintf('%o', fileperms($targetDir)), -4),
+                ]);
+                echo "</pre>";
+            
                 exit;
             }
+            
         }
 
         // Insert into database
