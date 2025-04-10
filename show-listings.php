@@ -79,7 +79,7 @@ $stmt->close();
 
                     <!-- Listing Content -->
                     <div class="listing-card" style="flex: 2;">
-                        <h3><?php echo htmlspecialchars($listing['title']); ?></h3>
+                        <h3><?php echo html_entity_decode($listing['title']); ?></h3>
                         <p><strong>Skill:</strong> <?php echo htmlspecialchars($listing['skill']); ?></p>
                         <p><?php echo htmlspecialchars($listing['description']); ?></p>
 
